@@ -37,8 +37,15 @@ button:focus-visible, input:focus-visible, summary:focus-visible, a:focus-visibl
 .language-control select:focus-visible { outline: 2px solid #34776c; outline-offset: 2px; }
 .connection { display: inline-flex; align-items: center; gap: 7px; color: #a8c1bc; font-size: 11px; }
 .connection i, .state-dot { width: 7px; height: 7px; border-radius: 50%; background: #67c5a7; box-shadow: 0 0 0 3px #67c5a71c; }
-.install-button { border: 1px solid #526d70; border-radius: 5px; background: transparent; color: #f5efda; padding: 7px 12px; font-size: 11px; }
+.install-button { min-height: 40px; border: 1px solid #526d70; border-radius: 5px; background: transparent; color: #f5efda; padding: 6px 10px; font-size: 11px; white-space: nowrap; }
 .install-button:hover { background: #1a4145; }
+.install-help-backdrop { position: fixed; z-index: 1100; inset: 0; display: grid; place-items: center; padding: 20px; background: rgb(20 35 35 / 58%); }
+.install-help-dialog { width: min(440px, 100%); border: 1px solid #dbe5e2; border-radius: 10px; padding: 20px; background: #fbfcfc; box-shadow: 0 18px 70px rgb(0 0 0 / 24%); }
+.install-help-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.install-help-heading h2 { margin: 0; color: #29474a; font-size: 18px; }
+.install-help-dialog ol { margin: 18px 0 10px; padding-left: 24px; color: #29474a; line-height: 1.65; }
+.install-help-dialog li + li { margin-top: 8px; }
+.install-help-dialog p { margin: 12px 0 0; color: #718486; font-size: 13px; line-height: 1.5; }
 .update-banner { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; justify-content: center; gap: 16px; padding: 10px; color: #203b3c; background: #ffed8a; font-size: 13px; }
 .update-banner button { border: 0; background: transparent; color: #102b31; font-weight: 700; text-decoration: underline; }
 

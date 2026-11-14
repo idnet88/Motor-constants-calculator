@@ -313,6 +313,9 @@ function App() {
   const [induction, setInduction] = useState(initialInduction)
   const [synchronous, setSynchronous] = useState(initialSynchronous)
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null)
+  const [isInstalled, setIsInstalled] = useState(() => isRunningAsInstalledApp())
+  const [showInstallHelp, setShowInstallHelp] = useState(false)
+  const installPlatform = getInstallPlatform()
   const { needRefresh: [needRefresh], updateServiceWorker } = useRegisterSW()
 
   const inductionResult = useMemo(() => calculateInduction(induction), [induction])
@@ -326,17 +329,32 @@ function App() {
       event.preventDefault()
       setInstallPrompt(event as BeforeInstallPromptEvent)
     }
+    const installedHandler = () => setIsInstalled(true)
     window.addEventListener('beforeinstallprompt', handler)
-    return () => window.removeEventListener('beforeinstallprompt', handler)
+    window.addEventListener('appinstalled', installedHandler)
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handler)
+      window.removeEventListener('appinstalled', installedHandler)
+    }
   }, [])
 
   useEffect(() => { localStorage.setItem('motor-constants-locale', locale) }, [locale])
   useEffect(() => { document.documentElement.lang = locale === 'en' ? 'en' : 'ko' }, [locale])
 
   async function installApp() {
-    if (!installPrompt) return
-    await installPrompt.prompt()
+    if (!installPrompt) {
+      setShowInstallHelp(true)
+      return
+    }
+    const promptEvent = installPrompt
     setInstallPrompt(null)
+    try {
+      await promptEvent.prompt()
+      const choice = await promptEvent.userChoice
+      if (choice.outcome === 'accepted') setIsInstalled(true)
+    } catch {
+      setShowInstallHelp(true)
+    }
   }
 
   function updateInduction<K extends keyof InductionInputs>(key: K, value: InductionInputs[K]) {
@@ -366,9 +384,11 @@ function App() {
         <div className="topbar-right">
           <label className="language-control"><span>{tr(locale, '언어')}</span><select aria-label={tr(locale, '언어')} value={locale} onChange={(event) => setLocale(event.currentTarget.value as Locale)}><option value="ko">한국어</option><option value="en">English</option></select></label>
           <span className="connection"><i />{tr(locale, '브라우저 내 계산')}</span>
-          {installPrompt && <button className="install-button" onClick={installApp}>{tr(locale, '앱 설치')}</button>}
+          {!isInstalled && (installPrompt || installPlatform !== 'other') && <button className="install-button" onClick={installApp}>{tr(locale, installPrompt ? '앱 설치' : '설치 방법')}</button>}
         </div>
       </header>
+
+      {showInstallHelp && <div className="install-help-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setShowInstallHelp(false) }}><section className="install-help-dialog" role="dialog" aria-modal="true" aria-labelledby="install-help-title" onKeyDown={(event) => { if (event.key === 'Escape') setShowInstallHelp(false) }}><div className="install-help-heading"><h2 id="install-help-title">{tr(locale, '이 앱을 설치하는 방법')}</h2><button type="button" className="chart-close" aria-label={tr(locale, '닫기')} onClick={() => setShowInstallHelp(false)}>×</button></div><ol>{(installPlatform === 'ios' ? ['Safari에서 이 페이지를 여세요.', '공유 버튼을 누른 다음 홈 화면에 추가를 선택하세요.'] : installPlatform === 'android' ? ['브라우저 메뉴(⋮)를 여세요.', '앱 설치 또는 홈 화면에 추가를 선택하세요.'] : ['브라우저 메뉴를 여세요.', '앱 설치 또는 홈 화면에 추가를 선택하세요.']).map((step) => <li key={step}>{tr(locale, step)}</li>)}</ol><p>{tr(locale, '설치 메뉴가 보이지 않으면 Safari 또는 Chrome에서 이 페이지를 여세요.')}</p></section></div>}
 
       {needRefresh && <div className="update-banner" role="status"><span>{tr(locale, '새 버전을 사용할 수 있습니다.')}</span><button onClick={() => updateServiceWorker(true)}>{tr(locale, '새로고침')}</button></div>}
 
@@ -654,6 +674,17 @@ function SynchronousOutput({ result, locale }: { result: SynchronousResults; loc
 declare global {
   interface BeforeInstallPromptEvent extends Event { prompt: () => Promise<void>; userChoice: Promise<{ outcome: 'accepted' | 'dismissed'; platform: string }> }
   interface WindowEventMap { beforeinstallprompt: BeforeInstallPromptEvent }
+  interface Navigator { standalone?: boolean }
+}
+
+function isRunningAsInstalledApp() {
+  return window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true
+}
+
+function getInstallPlatform(): 'ios' | 'android' | 'other' {
+  if (/iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) return 'ios'
+  if (/Android/i.test(navigator.userAgent)) return 'android'
+  return 'other'
 }
 
 export default App

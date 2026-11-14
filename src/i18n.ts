@@ -1,7 +1,8 @@
 export type Locale = 'ko' | 'en'
 
 const english: Record<string, string> = {
-  '모터 상수 계산기': 'Motor Constants Calculator', '전동기 해석 도구': 'Motor analysis tool', '브라우저 내 계산': 'Calculated in your browser', '앱 설치': 'Install app',
+  '모터 상수 계산기': 'Motor Constants Calculator', '전동기 해석 도구': 'Motor analysis tool', '브라우저 내 계산': 'Calculated in your browser', '앱 설치': 'Install app', '설치 방법': 'Install guide',
+  '이 앱을 설치하는 방법': 'How to install this app', '닫기': 'Close', 'Safari에서 이 페이지를 여세요.': 'Open this page in Safari.', '공유 버튼을 누른 다음 홈 화면에 추가를 선택하세요.': 'Tap Share, then choose Add to Home Screen.', '브라우저 메뉴(⋮)를 여세요.': 'Open the browser menu (⋮).', '앱 설치 또는 홈 화면에 추가를 선택하세요.': 'Choose Install app or Add to Home screen.', '브라우저 메뉴를 여세요.': 'Open the browser menu.', '설치 메뉴가 보이지 않으면 Safari 또는 Chrome에서 이 페이지를 여세요.': 'If no install option appears, open this page in Safari or Chrome.',
   '새 버전을 사용할 수 있습니다.': 'A new version is available.', '새로고침': 'Reload',
   '전동기 상수를': 'Motor constants', '빠르게 산출합니다.': 'calculated in seconds.', '정격 사양을 입력하면 계산 결과와 주파수 응답을 바로 확인할 수 있습니다. 계산은 이 기기 안에서 처리됩니다.': 'Enter the motor ratings to see calculated constants and frequency responses. Calculations stay on this device.',
   '전동기 종류 선택': 'Select motor type', '유도기': 'Induction', '동기기': 'Synchronous', '계산 완료': 'Calculation complete', '입력 확인 필요': 'Check inputs', '모터 사양': 'Motor ratings', '입력': 'INPUT',
