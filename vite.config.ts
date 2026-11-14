@@ -3,7 +3,11 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
 
+// GitHub Pages project sites are served below /<repository>/.
+const base = process.env.GITHUB_ACTIONS === 'true' ? '/Motor-constants-calculator/' : '/'
+
 export default defineConfig({
+  base,
   plugins: [
     react(),
     tailwindcss(),
@@ -17,7 +21,8 @@ export default defineConfig({
         theme_color: '#102b31',
         background_color: '#edf2f1',
         display: 'standalone',
-        start_url: '/',
+        start_url: base,
+        scope: base,
         icons: [{ src: 'motor-mark.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any maskable' }],
       },
       workbox: {
