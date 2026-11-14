@@ -1,0 +1,15 @@
+node_modules/
+dist/
+playwright-report/
+test-results/
+*.xlsx
+.env
+.env.*
+!.env.example
+*_reinspect.py
+*_refdata.py
+*_syncsamples.py
+엑셀_계산기_원본분석.md
+verification-*.png
+tsconfig.tsbuildinfo
+.agents/
